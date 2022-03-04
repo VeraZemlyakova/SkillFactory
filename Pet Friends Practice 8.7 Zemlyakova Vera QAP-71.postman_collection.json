@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "69894048-d03b-4c56-b120-ad352423e86c",
+		"name": "Pet Friends Practice 8.7 Zemlyakova Vera QAP-71",
+		"description": "Практикум модуля 8. Postman и отправка REST API запросов. Земляковой Веры. Группа QAP-71.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/api/key",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.variables.set(\"auth_key\", jsonData.key);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "email",
+						"value": "verusyav@yandex.ru",
+						"type": "text"
+					},
+					{
+						"key": "password",
+						"value": "Club2019_",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/key",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"key"
+					]
+				},
+				"description": "Получение ключа.\n\nСохранение API ключа авторизации в переменной auth_key.\n\nPostman."
+			},
+			"response": []
+		},
+		{
+			"name": "/api/create_pet_simple",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.variables.set(\"petid\", jsonData.id);\r",
+							"    pm.variables.set(\"old_name\", jsonData.name);\r",
+							"    pm.variables.set(\"pet_type\", jsonData.animal_type);\r",
+							"    pm.variables.set(\"pet_age\", jsonData.age);    \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Мотопёс",
+							"type": "text"
+						},
+						{
+							"key": "animal_type",
+							"value": "зверь, каких нет",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "3",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/create_pet_simple",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"create_pet_simple"
+					]
+				},
+				"description": "Добавление питомца.\n\nСохранение ID питомца из ответа в переменной petid Postman."
+			},
+			"response": []
+		},
+		{
+			"name": "update pet name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"    pm.variables.set(\"name\", jsonData.name);\r",
+							"pm.test(\"The new pet name is not the same as the old pet name\", function () { pm.expect(pm.variables.get(\"old_name\")).to.not.eql(pm.expect(pm.variables.get(\"name\")));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Котопёс",
+							"type": "text"
+						},
+						{
+							"key": "animal_type",
+							"value": "{{pet_type}}",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "{{pet_age}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/pets/:pet_id",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"pets",
+						":pet_id"
+					],
+					"variable": [
+						{
+							"key": "pet_id",
+							"value": "{{petid}}"
+						}
+					]
+				},
+				"description": "Изменение имени питомца.\n\nПроверка, что в ответе новое имя питомца не равно старому имени питомца.\n\nСохранение нового имени питомца в переменной name Postman."
+			},
+			"response": []
+		},
+		{
+			"name": "/api/pets",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"The new pet name is equal to the name of the first ([0]) pet\", function () {\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.expect(pm.variables.get(\"name\")).to.eql(jsonData.pets[0].name);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Language",
+						"value": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+						"type": "text"
+					},
+					{
+						"key": "Referer",
+						"value": "http://petfriends1.herokuapp.com/my_pets",
+						"type": "text"
+					},
+					{
+						"key": "X-KL-Ajax-Request",
+						"value": "Ajax_Request",
+						"type": "text"
+					},
+					{
+						"key": "Origin",
+						"value": "http://petfriends1.herokuapp.com",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/pets?filter=my_pets",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"pets"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "my_pets"
+						}
+					]
+				},
+				"description": "Получение списка питомцев.\n\nПроверка, что переменная name (новое имя питомца) равна значению name (имени) первого (\\[0\\]) питомца."
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{auth_key}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "auth_key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "auth_key",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "base_url",
+			"value": "https://petfriends1.herokuapp.com",
+			"type": "string"
+		},
+		{
+			"key": "petid",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "old_name",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "pet_type",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "pet_age",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "name",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
